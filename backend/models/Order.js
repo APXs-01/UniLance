@@ -58,6 +58,32 @@ const orderSchema = new mongoose.Schema(
       default: "pending",
     },
     rejectionReason: { type: String, default: "" },
-},
+
+    // ─── Delivery (Member 2) ──────────────────────────────────────────────────
+    deliveries: [deliverySchema],
+    revisionsUsed:   { type: Number, default: 0 },
+    maxRevisions:    { type: Number, default: 1 },
+
+    // ─── Review (Member 2) ────────────────────────────────────────────────────
+    isReviewed: { type: Boolean, default: false },
+
+    // ─── Timestamps ───────────────────────────────────────────────────────────
+    acceptedAt:   { type: Date },
+    completedAt:  { type: Date },
+    cancelledAt:  { type: Date },
+  },
   { timestamps: true }
-);  
+)
+
+ 
+// Auto-generate order number
+orderSchema.pre("save", async function (next) {
+  if (!this.orderNumber) {
+    const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const count = await this.constructor.countDocuments();
+    this.orderNumber = `UNI-${date}-${String(count + 1).padStart(4, "0")}`;
+  }
+  next();
+});
+
+module.exports = mongoose.model("Order", orderSchema);
