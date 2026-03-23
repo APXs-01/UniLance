@@ -162,3 +162,19 @@ const replyToReview = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 2 - Flag Review ───────────────────────────────────────────────────
+// PUT /api/reviews/:reviewId/flag
+const flagReview = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    await Review.findByIdAndUpdate(req.params.reviewId, {
+      isFlagged: true,
+      flagReason: reason || "",
+    });
+
+    res.status(200).json({ success: true, message: "Review flagged for admin review." });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
