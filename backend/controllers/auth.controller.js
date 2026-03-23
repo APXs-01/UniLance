@@ -184,3 +184,23 @@ const login = async (req, res) => {
   }
 };
 
+// ─── Member 4 - Forgot Password (Send Reset OTP) ──────────────────────────────
+// POST /api/auth/forgot-password
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      // Don't reveal if user exists
+      return res.status(200).json({ success: true, message: "If that email exists, a reset OTP has been sent." });
+    }
+
+    const otp = await createOTP(email, "password_reset");
+    await sendPasswordResetOTP(email, otp, user.name);
+
+    res.status(200).json({ success: true, message: "Password reset OTP sent to your email." });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
