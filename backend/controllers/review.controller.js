@@ -178,3 +178,46 @@ const flagReview = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 2 - Admin: Delete Inappropriate Review ───────────────────────────
+// DELETE /api/reviews/admin/:reviewId
+const adminDeleteReview = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const review = await Review.findById(req.params.reviewId).populate("gig");
+
+    if (!review) {
+      return res.status(404).json({ success: false, message: "Review not found." });
+    }
+
+    review.isDeleted = true;
+    review.deletedByAdmin = true;
+    review.deleteReason = reason || "Inappropriate content";
+    await review.save();
+
+    // Recalculate gig rating
+    const remainingReviews = await Review.find({ gig: review.gig._id, isDeleted: false });
+    const newAvg =
+      remainingReviews.length > 0
+        ? remainingReviews.reduce((sum, r) => sum + r.rating.overall, 0) / remainingReviews.length
+        : 0;
+
+    await Gig.findByIdAndUpdate(review.gig._id, {
+      averageRating: parseFloat(newAvg.toFixed(2)),
+      totalReviews: remainingReviews.length,
+    });
+
+    res.status(200).json({ success: true, message: "Review deleted by admin." });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = {
+  submitReview,
+  getGigReviews,
+  getFreelancerReviews,
+  replyToReview,
+  flagReview,
+  adminDeleteReview,
+};
