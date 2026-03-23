@@ -22,6 +22,12 @@ const payoutRequestSchema = new mongoose.Schema(
       accountNumber: { type: String, default: "" },
       routingNumber: { type: String, default: "" },
     },
+     // ─── Status (Member 1) ────────────────────────────────────────────────────
+    status: {
+      type: String,
+      enum: ["pending", "otp_verified", "approved", "processing", "completed", "rejected"],
+      default: "pending",
+    },
   },
   { timestamps: true }
 );
