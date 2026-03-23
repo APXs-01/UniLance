@@ -49,6 +49,24 @@ const userSchema = new mongoose.Schema(
     portfolioTheme: { type: String, enum: ["Dark", "Light"], default: "Light" },
     portfolioSlug: { type: String, unique: true, sparse: true }, // auto-generated shareable link
 
+     // ─── Profile Completion (Member 4) ───────────────────────────────────────
+    profileCompletionSteps: {
+      basicInfo:        { type: Boolean, default: false },
+      profilePicture:   { type: Boolean, default: false },
+      skills:           { type: Boolean, default: false },
+      availability:     { type: Boolean, default: false },
+      bio:              { type: Boolean, default: false },
+    },
+
+    // ─── Skills & Availability (Member 4) ────────────────────────────────────
+    skills: [skillSchema],
+    availability: [availabilitySlotSchema],
+
+    // ─── Freelancer Analytics (Member 4) ─────────────────────────────────────
+    profileViews: { type: Number, default: 0 },
+    totalOrdersCompleted: { type: Number, default: 0 },
+
+
     },
     { timestamps: true }
 );
