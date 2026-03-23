@@ -50,6 +50,14 @@ const orderSchema = new mongoose.Schema(
       ],
       default: "pending",
     },
+
+    // ─── Freelancer Accept/Reject (Member 2) ──────────────────────────────────
+    freelancerResponse: {
+      type: String,
+      enum: ["pending", "accepted", "rejected"],
+      default: "pending",
+    },
+    rejectionReason: { type: String, default: "" },
 },
   { timestamps: true }
 );  
