@@ -7,3 +7,25 @@ const deliverySchema = new mongoose.Schema({
   submittedAt:  { type: Date, default: Date.now },
   revisionNote: { type: String, default: "" }, // buyer rejection reason
 });
+
+const orderSchema = new mongoose.Schema(
+  {
+    // ─── Parties ──────────────────────────────────────────────────────────────
+    buyer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    freelancer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    gig: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Gig",
+      required: true,
+    },
+},
+  { timestamps: true }
+);  
