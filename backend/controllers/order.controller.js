@@ -56,6 +56,9 @@ const placeOrder = async (req, res) => {
       maxRevisions: gig.revisions,
     });
 
+    // Increment gig order count
+    await Gig.findByIdAndUpdate(gigId, { $inc: { totalOrders: 1 } });
+
      } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
