@@ -24,6 +24,15 @@ const reviewSchema = new mongoose.Schema(
       ref: "Gig",
       required: true,
     },
+     // ─── Multi-criteria Rating (Member 2) ─────────────────────────────────────
+    rating: {
+      overall:       { type: Number, required: true, min: 1, max: 5 },
+      communication: { type: Number, min: 1, max: 5 },
+      quality:       { type: Number, min: 1, max: 5 },
+      delivery:      { type: Number, min: 1, max: 5 },
+      value:         { type: Number, min: 1, max: 5 },
+    },
+    comment: { type: String, default: "", maxlength: 1000 },
   },
   { timestamps: true }
 );
