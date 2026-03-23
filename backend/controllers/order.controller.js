@@ -161,6 +161,20 @@ const submitDelivery = async (req, res) => {
     order.status = "delivered";
     await order.save();
 
+     // ─── Member 2 - Notify buyer of delivery ──────────────────────────────────
+    await notifyOrderDelivered(order.buyer._id, order._id, order.orderNumber);
+    await sendOrderStatusEmail(order.buyer.email, order.buyer.name, {
+      orderNumber: order.orderNumber,
+      status: "Delivered",
+      message: `Your order for "${order.gig.title}" has been delivered. Please review and approve.`,
+    });
+
+    res.status(200).json({ success: true, message: "Delivery submitted. Awaiting buyer approval." });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 
     
     
