@@ -39,6 +39,16 @@ const userSchema = new mongoose.Schema(
 
      // ─── Email Verification (Member 4) ────────────────────────────────────────
     isEmailVerified: { type: Boolean, default: false },
+
+    // ─── Profile (Member 4) ───────────────────────────────────────────────────
+    profilePicture: { type: String, default: "" },
+    bio: { type: String, default: "", maxlength: 500 },
+    phone: { type: String, default: "" },
+    location: { type: String, default: "" },
+    university: { type: String, default: "" }, // Freelancers only
+    portfolioTheme: { type: String, enum: ["Dark", "Light"], default: "Light" },
+    portfolioSlug: { type: String, unique: true, sparse: true }, // auto-generated shareable link
+
     },
     { timestamps: true }
 );
