@@ -112,3 +112,28 @@ const getGigReviews = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 2 - Get Reviews for a Freelancer ─────────────────────────────────
+// GET /api/reviews/freelancer/:freelancerId
+const getFreelancerReviews = async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const query = { freelancer: req.params.freelancerId, isDeleted: false };
+
+    const total = await Review.countDocuments(query);
+    const reviews = await Review.find(query)
+      .populate("buyer", "name profilePicture")
+      .populate("gig", "title")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    res.status(200).json({
+      success: true,
+      reviews,
+      pagination: { total, page: parseInt(page), pages: Math.ceil(total / limit) },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
