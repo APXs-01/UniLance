@@ -17,3 +17,21 @@ const BADGE_TITLES = {
   "Business Analysis":           "Certified Business Analyst",
   "Custom":                      "Certified Specialist",
 };
+
+// ─── Member 4 - Check SmartQuest Attempt Eligibility (max 2 per 24h) ─────────
+const checkAttemptEligibility = async (userId, skillCategory) => {
+  const user = await User.findById(userId).select("smartQuestAttempts");
+  const now = new Date();
+  const yesterday = new Date(now - 24 * 60 * 60 * 1000);
+
+  const recentAttempts = user.smartQuestAttempts.filter(
+    (a) =>
+      a.skill === skillCategory && new Date(a.attemptDate) > yesterday
+  );
+
+  return {
+    eligible: recentAttempts.length < 2,
+    attemptsUsed: recentAttempts.length,
+    remainingAttempts: Math.max(0, 2 - recentAttempts.length),
+  };
+};
