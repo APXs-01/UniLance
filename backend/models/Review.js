@@ -38,6 +38,11 @@ const reviewSchema = new mongoose.Schema(
 // ─── Freelancer Response ──────────────────────────────────────────────────
     freelancerReply:     { type: String, default: "" },
     freelancerRepliedAt: { type: Date },
+
+    // ─── Admin Moderation (Member 2) ──────────────────────────────────────────
+    isDeleted:     { type: Boolean, default: false },   // admin-deleted
+    deletedByAdmin:{ type: Boolean, default: false },
+    deleteReason:  { type: String, default: "" },
   },
   { timestamps: true }
 );
