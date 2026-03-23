@@ -22,6 +22,29 @@ const register = async (req, res) => {
       return res.status(400).json({ success: false, message: "Role must be freelancer or buyer." });
     }
 
+     // ─── Member 4 - Sri Lankan University Email Validation for Freelancers ───
+    if (role === "freelancer") {
+      const validation = validateUniversityEmail(email);
+      if (!validation.valid) {
+        return res.status(400).json({ success: false, message: validation.message });
+      }
+    }
+
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: "Email already registered." });
+    }
+
+    const university = role === "freelancer" ? getUniversityName(email) : "";
+
+    const user = await User.create({
+      name,
+      email: email.toLowerCase(),
+      password,
+      role,
+      university,
+    });
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
