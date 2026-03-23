@@ -103,3 +103,27 @@ const verifyEmail = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Resend Email Verification OTP ────────────────────────────────
+// POST /api/auth/resend-otp
+const resendOTP = async (req, res) => {
+  try {
+    const { email, type } = req.body;
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    if (type === "email_verification" && user.isEmailVerified) {
+      return res.status(400).json({ success: false, message: "Email already verified." });
+    }
+
+    const otp = await createOTP(email, type || "email_verification");
+    await sendEmailVerificationOTP(email, otp, user.name);
+
+    res.status(200).json({ success: true, message: "OTP resent to your email." });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
