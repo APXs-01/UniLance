@@ -252,5 +252,36 @@ const reviewDelivery = async (req, res) => {
 };
 
 
+
+// ─── Member 2 - Get Order by ID ───────────────────────────────────────────────
+// GET /api/orders/:orderId
+const getOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.orderId)
+      .populate("buyer", "name email profilePicture")
+      .populate("freelancer", "name email profilePicture")
+      .populate("gig")
+      .populate("transaction");
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found." });
+    }
+
+    // Only parties involved or admin can view
+    const isBuyer = order.buyer._id.toString() === req.user._id.toString();
+    const isFreelancer = order.freelancer._id.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === "admin";
+
+    if (!isBuyer && !isFreelancer && !isAdmin) {
+      return res.status(403).json({ success: false, message: "Access denied." });
+    }
+
+    res.status(200).json({ success: true, order });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
     
     
