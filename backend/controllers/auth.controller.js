@@ -282,3 +282,14 @@ const changePassword = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+module.exports = {
+  register,
+  verifyEmail,
+  resendOTP,
+  login,
+  forgotPassword,
+  resetPassword,
+  getMe,
+  changePassword,
+};
