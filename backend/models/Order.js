@@ -58,6 +58,11 @@ const orderSchema = new mongoose.Schema(
       default: "pending",
     },
     rejectionReason: { type: String, default: "" },
+
+    // ─── Delivery (Member 2) ──────────────────────────────────────────────────
+    deliveries: [deliverySchema],
+    revisionsUsed:   { type: Number, default: 0 },
+    maxRevisions:    { type: Number, default: 1 },
 },
   { timestamps: true }
 );  
