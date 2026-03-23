@@ -45,3 +45,29 @@ const getAllUsers = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Admin: Deactivate/Activate User ──────────────────────────────
+// PUT /api/admin/users/:userId/toggle-status
+const toggleUserStatus = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    if (user.role === "admin") {
+      return res.status(400).json({ success: false, message: "Cannot deactivate admin accounts." });
+    }
+
+    user.isActive = !user.isActive;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: `User ${user.isActive ? "activated" : "deactivated"}.`,
+      isActive: user.isActive,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
