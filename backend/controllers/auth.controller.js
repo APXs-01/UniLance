@@ -127,3 +127,60 @@ const resendOTP = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Login ─────────────────────────────────────────────────────────
+// POST /api/auth/login
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: "Email and password are required." });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(401).json({ success: false, message: "Invalid email or password." });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({ success: false, message: "Account is deactivated. Contact support." });
+    }
+
+    if (!user.isEmailVerified) {
+      return res.status(403).json({
+        success: false,
+        message: "Email not verified. Please verify your email first.",
+        requiresVerification: true,
+        email: user.email,
+      });
+    }
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: "Invalid email or password." });
+    }
+
+    const token = generateToken(user._id);
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful.",
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        university: user.university,
+        profilePicture: user.profilePicture,
+        profileCompletion: user.getProfileCompletion(),
+        walletBalance: user.walletBalance,
+        isEmailVerified: user.isEmailVerified,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
