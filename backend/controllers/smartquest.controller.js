@@ -141,3 +141,119 @@ const startSmartQuest = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Submit SmartQuest Answers ────────────────────────────────────
+// POST /api/smartquest/:questId/submit
+const submitSmartQuest = async (req, res) => {
+  try {
+    const { answers } = req.body; // array of selected option indices ["0","2","1",...]
+    const quest = await SmartQuest.findById(req.params.questId);
+
+    if (!quest) {
+      return res.status(404).json({ success: false, message: "Quest session not found." });
+    }
+
+    if (quest.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: "Access denied." });
+    }
+
+    if (quest.status !== "in_progress") {
+      return res.status(400).json({ success: false, message: "This quest session is no longer active." });
+    }
+
+    // ─── Check 30-minute timer (Member 4) ────────────────────────────────────
+    const elapsed = (Date.now() - new Date(quest.startedAt)) / 1000 / 60;
+    if (elapsed > quest.durationMinutes + 1) { // +1 min grace
+      quest.status = "expired";
+      await quest.save();
+      return res.status(400).json({ success: false, message: "Time limit exceeded. Quest expired." });
+    }
+
+    // ─── Grade the quiz (80% pass mark) ───────────────────────────────────────
+    let correctCount = 0;
+    quest.questions.forEach((q, idx) => {
+      if (answers[idx] !== undefined && answers[idx].toString() === q.correctAnswer.toString()) {
+        correctCount++;
+      }
+    });
+
+    const score = Math.round((correctCount / quest.totalQuestions) * 100);
+    const passed = score >= 80;
+
+    quest.userAnswers = answers;
+    quest.score = score;
+    quest.passed = passed;
+    quest.submittedAt = new Date();
+    quest.status = "completed";
+
+    let badgeTitle = "";
+
+    if (passed) {
+      // ─── Award verified badge (Member 4) ──────────────────────────────────
+      badgeTitle = BADGE_TITLES[quest.skillCategory] || `Certified ${quest.skillCategory} Specialist`;
+      quest.badgeAwarded = true;
+      quest.badgeTitle = badgeTitle;
+
+      // Update skill as verified in user profile
+      const user = await User.findById(req.user._id);
+      const skill = user.skills.find(
+        (s) => s.name.toLowerCase() === quest.skillCategory.toLowerCase()
+      );
+
+      if (skill) {
+        skill.verified = true;
+        skill.verifiedBadgeTitle = badgeTitle;
+        skill.verifiedAt = new Date();
+      } else {
+        user.skills.push({
+          name: quest.skillCategory,
+          proficiency: "Expert",
+          verified: true,
+          verifiedBadgeTitle: badgeTitle,
+          verifiedAt: new Date(),
+        });
+      }
+      user.profileCompletionSteps.skills = true;
+      await user.save();
+
+      // Create badge record
+      const badge = await Badge.create({
+        user: req.user._id,
+        title: badgeTitle,
+        description: `Passed the ${quest.skillCategory} SmartQuest assessment with ${score}%.`,
+        type: "skill_verified",
+      });
+
+      // Real-time notification
+      await notifySmartQuestPassed(req.user._id, quest.skillCategory, badgeTitle);
+    }
+
+    await quest.save();
+
+    // Send result email
+    const freshUser = await User.findById(req.user._id).select("email name");
+    await sendSmartQuestResultEmail(freshUser.email, freshUser.name, {
+      skill: quest.skillCategory,
+      score,
+      passed,
+      badgeTitle,
+    });
+
+    res.status(200).json({
+      success: true,
+      result: {
+        score,
+        correctCount,
+        totalQuestions: quest.totalQuestions,
+        passed,
+        badgeTitle: passed ? badgeTitle : null,
+        message: passed
+          ? `Congratulations! You passed with ${score}%. Badge "${badgeTitle}" added to your profile.`
+          : `You scored ${score}%. You need 80% to pass. ${quest.attemptNumber < 2 ? "You have 1 more attempt available." : "No more attempts today."}`,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
