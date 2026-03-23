@@ -63,6 +63,10 @@ const orderSchema = new mongoose.Schema(
     deliveries: [deliverySchema],
     revisionsUsed:   { type: Number, default: 0 },
     maxRevisions:    { type: Number, default: 1 },
+
+    // ─── Review (Member 2) ────────────────────────────────────────────────────
+    isReviewed: { type: Boolean, default: false },
+
 },
   { timestamps: true }
 );  
