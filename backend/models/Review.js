@@ -24,6 +24,7 @@ const reviewSchema = new mongoose.Schema(
       ref: "Gig",
       required: true,
     },
+
      // ─── Multi-criteria Rating (Member 2) ─────────────────────────────────────
     rating: {
       overall:       { type: Number, required: true, min: 1, max: 5 },
@@ -33,6 +34,10 @@ const reviewSchema = new mongoose.Schema(
       value:         { type: Number, min: 1, max: 5 },
     },
     comment: { type: String, default: "", maxlength: 1000 },
+
+// ─── Freelancer Response ──────────────────────────────────────────────────
+    freelancerReply:     { type: String, default: "" },
+    freelancerRepliedAt: { type: Date },
   },
   { timestamps: true }
 );
