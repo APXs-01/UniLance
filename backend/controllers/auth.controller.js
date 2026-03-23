@@ -237,3 +237,23 @@ const resetPassword = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Get Current Authenticated User ────────────────────────────────
+// GET /api/auth/me
+const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+      .select("-password")
+      .populate("communities", "name icon totalMembers");
+
+    res.status(200).json({
+      success: true,
+      user: {
+        ...user.toObject(),
+        profileCompletion: user.getProfileCompletion(),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
