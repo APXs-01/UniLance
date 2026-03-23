@@ -32,6 +32,13 @@ const payoutRequestSchema = new mongoose.Schema(
     // ─── OTP Verification (Member 1) ──────────────────────────────────────────
     otpVerified:   { type: Boolean, default: false },
     otpVerifiedAt: { type: Date },
+
+    // ─── Admin Processing (Member 1) ──────────────────────────────────────────
+    processedBy:  { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    processedAt:  { type: Date },
+    rejectionNote:{ type: String, default: "" },
+    stripePayoutId: { type: String, default: "" },
+
     
   },
   { timestamps: true }
