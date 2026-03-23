@@ -79,6 +79,62 @@ const placeOrder = async (req, res) => {
   }
 };
 
+// ─── Member 2 - Freelancer Accept/Reject Order ───────────────────────────────
+// PUT /api/orders/:orderId/respond
+const respondToOrder = async (req, res) => {
+  try {
+    const { response, reason } = req.body; // "accepted" or "rejected"
+
+    const order = await Order.findById(req.params.orderId)
+      .populate("buyer", "name email")
+      .populate("gig", "title");
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found." });
+    }
+
+    if (order.freelancer.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: "Access denied." });
+    }
+
+    if (order.paymentStatus !== "paid") {
+      return res.status(400).json({ success: false, message: "Cannot respond to unpaid orders." });
+    }
+
+    if (!["accepted", "rejected"].includes(response)) {
+      return res.status(400).json({ success: false, message: "Response must be accepted or rejected." });
+    }
+
+    order.freelancerResponse = response;
+
+    if (response === "accepted") {
+      order.status = "in_progress";
+      order.acceptedAt = new Date();
+      await notifyOrderAccepted(order.buyer._id, order._id, order.orderNumber);
+      await sendOrderStatusEmail(order.buyer.email, order.buyer.name, {
+        orderNumber: order.orderNumber,
+        status: "In Progress",
+        message: `Your order for "${order.gig.title}" has been accepted and is now in progress.`,
+      });
+    } else {
+      order.status = "cancelled";
+      order.rejectionReason = reason || "";
+      order.cancelledAt = new Date();
+      // Refund should be triggered here via payment controller
+    }
+
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Order ${response} successfully.`,
+      orderStatus: order.status,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 
     
     
