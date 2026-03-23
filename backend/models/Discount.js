@@ -15,7 +15,12 @@ const discountSchema = new mongoose.Schema(
     minOrder: { type: Number, default: 0 },     // minimum order amount to apply
     maxUses:  { type: Number, default: null },   // null = unlimited
     usedCount:{ type: Number, default: 0 },
-    
+
+    // ─── Validity ─────────────────────────────────────────────────────────────
+    validFrom:  { type: Date, required: true },
+    validUntil: { type: Date, required: true },
+    isActive:   { type: Boolean, default: true },
+
   },
   { timestamps: true }
 );
