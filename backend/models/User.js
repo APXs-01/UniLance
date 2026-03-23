@@ -36,7 +36,9 @@ const userSchema = new mongoose.Schema(
       enum: ["freelancer", "buyer", "admin"],
       required: true,
     },
-    
+
+     // ─── Email Verification (Member 4) ────────────────────────────────────────
+    isEmailVerified: { type: Boolean, default: false },
     },
     { timestamps: true }
 );
