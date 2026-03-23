@@ -186,3 +186,41 @@ const updateAvailability = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Get Freelancer Analytics Dashboard ────────────────────────────
+// GET /api/users/analytics
+const getFreelancerAnalytics = async (req, res) => {
+  try {
+    if (req.user.role !== "freelancer") {
+      return res.status(403).json({ success: false, message: "Only freelancers can view analytics." });
+    }
+
+    const user = await User.findById(req.user._id).select("profileViews totalOrdersCompleted skills walletBalance");
+    const badges = await Badge.find({ user: req.user._id });
+    const gigs = await Gig.find({ freelancer: req.user._id });
+
+    const totalGigs = gigs.length;
+    const activeGigs = gigs.filter((g) => g.isActive).length;
+    const avgRating =
+      gigs.length > 0
+        ? gigs.reduce((sum, g) => sum + g.averageRating, 0) / gigs.length
+        : 0;
+
+    res.status(200).json({
+      success: true,
+      analytics: {
+        profileViews: user.profileViews,
+        totalOrdersCompleted: user.totalOrdersCompleted,
+        walletBalance: user.walletBalance,
+        totalBadges: badges.length,
+        verifiedSkills: user.skills.filter((s) => s.verified).length,
+        totalSkills: user.skills.length,
+        totalGigs,
+        activeGigs,
+        averageRating: parseFloat(avgRating.toFixed(2)),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
