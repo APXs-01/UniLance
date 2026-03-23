@@ -8,6 +8,22 @@ const badgeSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
+    // ─── Badge Info (Member 2) ─────────────────────────────────────────────────
+    title:       { type: String, required: true },      // e.g. "Rising Star"
+    description: { type: String, default: "" },
+    icon:        { type: String, default: "" },         // icon URL or emoji key
+    type: {
+      type: String,
+      enum: [
+        "milestone",      // Member 2 - order completion milestones
+        
+        
+        "top_rated",      // Member 2 - rating achievement
+      ],
+      required: true,
+    },
+
     },
   { timestamps: true }
 );
