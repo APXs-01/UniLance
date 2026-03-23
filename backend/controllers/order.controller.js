@@ -135,6 +135,32 @@ const respondToOrder = async (req, res) => {
   }
 };
 
+// ─── Member 2 - Freelancer Submit Delivery ────────────────────────────────────
+// POST /api/orders/:orderId/deliver
+const submitDelivery = async (req, res) => {
+  try {
+    const { message, attachments } = req.body;
+
+    const order = await Order.findById(req.params.orderId)
+      .populate("buyer", "name email")
+      .populate("gig", "title");
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found." });
+    }
+
+    if (order.freelancer.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: "Access denied." });
+    }
+
+    if (!["in_progress", "revision"].includes(order.status)) {
+      return res.status(400).json({ success: false, message: "Order is not in progress." });
+    }
+
+    order.deliveries.push({ message, attachments: attachments || [] });
+    order.status = "delivered";
+    await order.save();
+
 
     
     
