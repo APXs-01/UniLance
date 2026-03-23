@@ -28,6 +28,11 @@ const payoutRequestSchema = new mongoose.Schema(
       enum: ["pending", "otp_verified", "approved", "processing", "completed", "rejected"],
       default: "pending",
     },
+
+    // ─── OTP Verification (Member 1) ──────────────────────────────────────────
+    otpVerified:   { type: Boolean, default: false },
+    otpVerifiedAt: { type: Date },
+    
   },
   { timestamps: true }
 );
