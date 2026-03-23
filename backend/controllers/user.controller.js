@@ -77,3 +77,29 @@ const updateProfile = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Update Profile Picture ───────────────────────────────────────
+// PUT /api/users/profile/picture
+const updateProfilePicture = async (req, res) => {
+  try {
+    const { imageUrl } = req.body; // URL from upload service
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        profilePicture: imageUrl,
+        "profileCompletionSteps.profilePicture": true,
+      },
+      { new: true }
+    ).select("-password");
+
+    res.status(200).json({
+      success: true,
+      message: "Profile picture updated.",
+      profilePicture: user.profilePicture,
+      profileCompletion: user.getProfileCompletion(),
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
