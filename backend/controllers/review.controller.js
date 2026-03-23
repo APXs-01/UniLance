@@ -79,3 +79,36 @@ const submitReview = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 2 - Get Reviews for a Gig ────────────────────────────────────────
+// GET /api/reviews/gig/:gigId
+const getGigReviews = async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const query = { gig: req.params.gigId, isDeleted: false };
+
+    const total = await Review.countDocuments(query);
+    const reviews = await Review.find(query)
+      .populate("buyer", "name profilePicture")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    // Rating breakdown
+    const allReviews = await Review.find(query).select("rating");
+    const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    allReviews.forEach((r) => {
+      const rounded = Math.round(r.rating.overall);
+      if (breakdown[rounded] !== undefined) breakdown[rounded]++;
+    });
+
+    res.status(200).json({
+      success: true,
+      reviews,
+      ratingBreakdown: breakdown,
+      pagination: { total, page: parseInt(page), pages: Math.ceil(total / limit) },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
