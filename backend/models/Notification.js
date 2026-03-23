@@ -28,16 +28,29 @@ const notificationSchema = new mongoose.Schema(
         "revision_requested",
         "badge_awarded",
         "new_review",
-        
-       
+
+        // Member 4 - Auth/profile events
+        "smartquest_passed",
+        "smartquest_failed",
+        "profile_viewed",
       ],
       required: true,
     },
 
+     // ─── Reference Links ──────────────────────────────────────────────────────
+    relatedId:   { type: mongoose.Schema.Types.ObjectId }, // order/transaction/etc ID
+    relatedModel:{ type: String, default: "" }, // "Order", "Transaction", etc.
+    link:        { type: String, default: "" },  // frontend route link
+
+    // ─── Status ───────────────────────────────────────────────────────────────
+    isRead:  { type: Boolean, default: false },
+    readAt:  { type: Date },
    
   },
   { timestamps: true }
 );
 
+// Index for fast unread queries
+notificationSchema.index({ recipient: 1, isRead: 1, createdAt: -1 });
 
 module.exports = mongoose.model("Notification", notificationSchema);
