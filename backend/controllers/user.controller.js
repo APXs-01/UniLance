@@ -224,3 +224,25 @@ const getFreelancerAnalytics = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Export Portfolio as PDF ──────────────────────────────────────
+// GET /api/users/portfolio/export
+const exportPortfolioPDF = async (req, res) => {
+  try {
+    const { generatePortfolioPDF } = require("../utils/pdfService");
+
+    const user = await User.findById(req.user._id).select("-password");
+    const badges = await Badge.find({ user: req.user._id });
+
+    const pdfBuffer = await generatePortfolioPDF(user, badges);
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="UniLance_Portfolio_${user.name.replace(/\s+/g, "_")}.pdf"`
+    );
+    res.send(pdfBuffer);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
