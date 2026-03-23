@@ -1,0 +1,1 @@
+// Member 4 - Auth Controller (Registration, Login, Email Verification, OTP, Password Reset)
