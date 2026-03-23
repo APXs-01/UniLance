@@ -24,6 +24,12 @@ const badgeSchema = new mongoose.Schema(
       required: true,
     },
 
-    },
+   // ─── Milestone Trigger (Member 2) ─────────────────────────────────────────
+    triggerValue: { type: Number, default: 0 }, // e.g. 5 orders = "Rising Star"
+
+    awardedAt: { type: Date, default: Date.now },
+  },
   { timestamps: true }
 );
+
+module.exports = mongoose.model("Badge", badgeSchema);
