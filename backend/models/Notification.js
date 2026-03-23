@@ -33,6 +33,11 @@ const notificationSchema = new mongoose.Schema(
         "smartquest_passed",
         "smartquest_failed",
         "profile_viewed",
+
+        // Member 3 - Community events
+        "community_joined",
+        "new_message",
+        "member_flagged",
       ],
       required: true,
     },
