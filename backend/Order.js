@@ -33,6 +33,23 @@ const orderSchema = new mongoose.Schema(
     price:          { type: Number, required: true },
     deliveryDays:   { type: Number, required: true },
     deadline:       { type: Date },
+
+    // ─── Status Tracking (Member 2) ───────────────────────────────────────────
+    // Pending → Accepted → In Progress → Delivered → Completed / Cancelled
+    status: {
+      type: String,
+      enum: [
+        "pending",      // buyer placed order, awaiting freelancer acceptance
+        "accepted",     // freelancer accepted
+        "in_progress",  // work started
+        "delivered",    // freelancer submitted delivery
+        "revision",     // buyer rejected, revision requested
+        "completed",    // buyer approved delivery
+        "cancelled",    // cancelled by freelancer or admin
+        "disputed",     // buyer/freelancer raised a dispute
+      ],
+      default: "pending",
+    },
 },
   { timestamps: true }
 );  
