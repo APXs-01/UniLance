@@ -59,7 +59,23 @@ const submitReview = async (req, res) => {
       totalReviews: allReviews.length,
     });
 
-     } catch (error) {
+    // Notify freelancer
+    await createNotification({
+      recipient: order.freelancer,
+      title: "New Review Received",
+      message: `You received a ${rating.overall}-star review.`,
+      type: "new_review",
+      relatedId: review._id,
+      relatedModel: "Review",
+      link: `/gigs/${order.gig._id}`,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Review submitted successfully.",
+      review,
+    });
+} catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
