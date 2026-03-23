@@ -313,6 +313,50 @@ const getMyOrders = async (req, res) => {
   }
 };
 
+// ─── Member 2 - Cancel Order (Admin only, or buyer before acceptance) ─────────
+// PUT /api/orders/:orderId/cancel
+const cancelOrder = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const order = await Order.findById(req.params.orderId);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found." });
+    }
+
+    const isBuyer = order.buyer.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === "admin";
+
+    if (!isBuyer && !isAdmin) {
+      return res.status(403).json({ success: false, message: "Access denied." });
+    }
+
+    if (isBuyer && !["pending", "accepted"].includes(order.status)) {
+      return res.status(400).json({ success: false, message: "Order cannot be cancelled at this stage." });
+    }
+
+    order.status = "cancelled";
+    order.cancelledAt = new Date();
+    order.rejectionReason = reason || "Cancelled";
+    await order.save();
+
+    res.status(200).json({ success: true, message: "Order cancelled." });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = {
+  placeOrder,
+  respondToOrder,
+  submitDelivery,
+  reviewDelivery,
+  getOrder,
+  getMyOrders,
+  cancelOrder,
+};
+
+
 
     
     
