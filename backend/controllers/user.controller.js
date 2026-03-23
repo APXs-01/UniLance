@@ -246,3 +246,30 @@ const exportPortfolioPDF = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Get all freelancers (for buyers browsing) ────────────────────
+// GET /api/users/freelancers
+const getFreelancers = async (req, res) => {
+  try {
+    const { skill, university, page = 1, limit = 12 } = req.query;
+    const query = { role: "freelancer", isActive: true, isEmailVerified: true };
+
+    if (skill) query["skills.name"] = { $regex: skill, $options: "i" };
+    if (university) query.university = { $regex: university, $options: "i" };
+
+    const total = await User.countDocuments(query);
+    const freelancers = await User.find(query)
+      .select("name profilePicture university skills availability totalOrdersCompleted portfolioSlug portfolioTheme")
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit))
+      .sort({ totalOrdersCompleted: -1 });
+
+    res.status(200).json({
+      success: true,
+      freelancers,
+      pagination: { total, page: parseInt(page), pages: Math.ceil(total / limit) },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
