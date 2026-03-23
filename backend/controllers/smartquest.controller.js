@@ -257,3 +257,18 @@ const submitSmartQuest = async (req, res) => {
   }
 };
 
+// ─── Member 4 - Get SmartQuest History ───────────────────────────────────────
+// GET /api/smartquest/history
+const getSmartQuestHistory = async (req, res) => {
+  try {
+    const history = await SmartQuest.find({ user: req.user._id })
+      .select("-questions -userAnswers")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, history });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { startSmartQuest, submitSmartQuest, getSmartQuestHistory };
