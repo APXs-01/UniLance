@@ -97,5 +97,12 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
+// ─── Profile Completion Percentage (Member 4) ────────────────────────────────
+userSchema.methods.getProfileCompletion = function () {
+  const steps = Object.values(this.profileCompletionSteps);
+  const completed = steps.filter(Boolean).length;
+  return Math.round((completed / steps.length) * 100);
+};
+
 
 module.exports = mongoose.model("User", userSchema);
