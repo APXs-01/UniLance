@@ -73,6 +73,14 @@ const userSchema = new mongoose.Schema(
     // ─── Wallet / Earnings (Member 1) ─────────────────────────────────────────
     walletBalance:    { type: Number, default: 0 },   // available for withdrawal
 
+    // ─── SmartQuest Rate Limiting (Member 4) ─────────────────────────────────
+    smartQuestAttempts: [
+      {
+        skill:       { type: String },
+        attemptDate: { type: Date },
+      },
+    ],
+
     },
     { timestamps: true }
 );
