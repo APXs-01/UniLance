@@ -160,3 +160,29 @@ const removeSkill = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Update Availability Schedule ─────────────────────────────────
+// PUT /api/users/availability
+const updateAvailability = async (req, res) => {
+  try {
+    const { availability } = req.body; // array of { day, startTime, endTime }
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        availability,
+        "profileCompletionSteps.availability": availability && availability.length > 0,
+      },
+      { new: true }
+    ).select("-password");
+
+    res.status(200).json({
+      success: true,
+      message: "Availability updated.",
+      availability: user.availability,
+      profileCompletion: user.getProfileCompletion(),
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
