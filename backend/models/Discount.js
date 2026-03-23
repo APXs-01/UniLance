@@ -21,6 +21,11 @@ const discountSchema = new mongoose.Schema(
     validUntil: { type: Date, required: true },
     isActive:   { type: Boolean, default: true },
 
+    // ─── Restrictions ─────────────────────────────────────────────────────────
+    applicableCategories: [{ type: String }], // empty = all categories
+    usedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // admin
   },
   { timestamps: true }
 );
