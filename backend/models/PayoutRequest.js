@@ -38,8 +38,10 @@ const payoutRequestSchema = new mongoose.Schema(
     processedAt:  { type: Date },
     rejectionNote:{ type: String, default: "" },
     stripePayoutId: { type: String, default: "" },
-
     
+    // ─── Payout ID ────────────────────────────────────────────────────────────
+    payoutId: { type: String, unique: true },
+
   },
   { timestamps: true }
 );
