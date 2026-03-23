@@ -45,6 +45,10 @@ const submitReview = async (req, res) => {
       comment: comment || "",
     });
 
+    // Mark order as reviewed
+    order.isReviewed = true;
+    await order.save();
+
      } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
