@@ -76,3 +76,14 @@ const orderSchema = new mongoose.Schema(
 )
 
  
+// Auto-generate order number
+orderSchema.pre("save", async function (next) {
+  if (!this.orderNumber) {
+    const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const count = await this.constructor.countDocuments();
+    this.orderNumber = `UNI-${date}-${String(count + 1).padStart(4, "0")}`;
+  }
+  next();
+});
+
+module.exports = mongoose.model("Order", orderSchema);
