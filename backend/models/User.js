@@ -66,6 +66,12 @@ const userSchema = new mongoose.Schema(
     profileViews: { type: Number, default: 0 },
     totalOrdersCompleted: { type: Number, default: 0 },
 
+     // ─── Stripe (Member 1) ───────────────────────────────────────────────────
+    stripeCustomerId: { type: String, default: "" },
+    stripeAccountId:  { type: String, default: "" }, // for freelancer payouts
+
+    // ─── Wallet / Earnings (Member 1) ─────────────────────────────────────────
+    walletBalance:    { type: Number, default: 0 },   // available for withdrawal
 
     },
     { timestamps: true }
