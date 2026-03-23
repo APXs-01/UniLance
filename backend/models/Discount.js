@@ -29,3 +29,5 @@ const discountSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+module.exports = mongoose.model("Discount", discountSchema);
