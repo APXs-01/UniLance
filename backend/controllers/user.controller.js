@@ -103,3 +103,43 @@ const updateProfilePicture = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Add / Update Skill ───────────────────────────────────────────
+// POST /api/users/skills
+const addSkill = async (req, res) => {
+  try {
+    const { name, proficiency } = req.body;
+
+    if (!name || !proficiency) {
+      return res.status(400).json({ success: false, message: "Skill name and proficiency are required." });
+    }
+
+    const user = await User.findById(req.user._id);
+
+    // Avoid duplicate skill names
+    const existingSkill = user.skills.find(
+      (s) => s.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (existingSkill) {
+      existingSkill.proficiency = proficiency;
+    } else {
+      user.skills.push({ name, proficiency });
+    }
+
+    if (user.skills.length > 0) {
+      user.profileCompletionSteps.skills = true;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Skill added/updated.",
+      skills: user.skills,
+      profileCompletion: user.getProfileCompletion(),
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
