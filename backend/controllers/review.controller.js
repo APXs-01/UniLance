@@ -49,6 +49,16 @@ const submitReview = async (req, res) => {
     order.isReviewed = true;
     await order.save();
 
+    // ─── Member 2 - Update gig average rating ────────────────────────────────
+    const allReviews = await Review.find({ gig: order.gig._id, isDeleted: false });
+    const avgRating =
+      allReviews.reduce((sum, r) => sum + r.rating.overall, 0) / allReviews.length;
+
+    await Gig.findByIdAndUpdate(order.gig._id, {
+      averageRating: parseFloat(avgRating.toFixed(2)),
+      totalReviews: allReviews.length,
+    });
+
      } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
