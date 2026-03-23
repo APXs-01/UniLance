@@ -143,3 +143,20 @@ const addSkill = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Remove Skill ──────────────────────────────────────────────────
+// DELETE /api/users/skills/:skillId
+const removeSkill = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    user.skills = user.skills.filter(
+      (s) => s._id.toString() !== req.params.skillId
+    );
+    if (user.skills.length === 0) user.profileCompletionSteps.skills = false;
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Skill removed.", skills: user.skills });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
