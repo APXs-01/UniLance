@@ -97,5 +97,20 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
+// ─── Profile Completion Percentage (Member 4) ────────────────────────────────
+userSchema.methods.getProfileCompletion = function () {
+  const steps = Object.values(this.profileCompletionSteps);
+  const completed = steps.filter(Boolean).length;
+  return Math.round((completed / steps.length) * 100);
+};
+
+// ─── Auto-generate portfolio slug (Member 4) ─────────────────────────────────
+userSchema.pre("save", function (next) {
+  if (!this.portfolioSlug && this.name) {
+    const slug = this.name.toLowerCase().replace(/\s+/g, "-") + "-" + Date.now();
+    this.portfolioSlug = slug;
+  }
+  next();
+});
 
 module.exports = mongoose.model("User", userSchema);
