@@ -43,6 +43,10 @@ const reviewSchema = new mongoose.Schema(
     isDeleted:     { type: Boolean, default: false },   // admin-deleted
     deletedByAdmin:{ type: Boolean, default: false },
     deleteReason:  { type: String, default: "" },
+
+     // ─── Flagging ─────────────────────────────────────────────────────────────
+    isFlagged:   { type: Boolean, default: false },
+    flagReason:  { type: String, default: "" },
   },
   { timestamps: true }
 );
