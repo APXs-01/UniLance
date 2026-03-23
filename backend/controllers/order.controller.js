@@ -176,5 +176,81 @@ const submitDelivery = async (req, res) => {
 };
 
 
+// ─── Member 2 - Buyer Approve/Reject Delivery ────────────────────────────────
+// PUT /api/orders/:orderId/review-delivery
+const reviewDelivery = async (req, res) => {
+  try {
+    const { action, revisionNote } = req.body; // "approve" or "reject"
+
+    const order = await Order.findById(req.params.orderId)
+      .populate("freelancer", "name email");
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found." });
+    }
+
+    if (order.buyer.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: "Access denied." });
+    }
+
+    if (order.status !== "delivered") {
+      return res.status(400).json({ success: false, message: "No delivery to review." });
+    }
+
+    if (action === "approve") {
+      order.status = "completed";
+      order.completedAt = new Date();
+      await order.save();
+
+      // Notify freelancer
+      await notifyOrderCompleted(order.freelancer._id, order._id, order.orderNumber);
+
+      // ─── Member 2 - Check badge milestones ────────────────────────────────
+      const freelancer = await User.findById(order.freelancer._id);
+      const completedCount = freelancer.totalOrdersCompleted + 1;
+
+      const milestone = BADGE_MILESTONES.find((m) => m.count === completedCount);
+      if (milestone) {
+        const badge = await Badge.create({
+          user: order.freelancer._id,
+          title: milestone.title,
+          description: milestone.description,
+          type: "milestone",
+          triggerValue: milestone.count,
+        });
+        await notifyBadgeAwarded(order.freelancer._id, badge._id, milestone.title);
+      }
+
+    } else if (action === "reject") {
+      if (order.revisionsUsed >= order.maxRevisions) {
+        return res.status(400).json({
+          success: false,
+          message: `Maximum revisions (${order.maxRevisions}) reached.`,
+        });
+      }
+
+      // Set revision note on latest delivery
+      const latestDelivery = order.deliveries[order.deliveries.length - 1];
+      if (latestDelivery) latestDelivery.revisionNote = revisionNote || "";
+
+      order.status = "revision";
+      order.revisionsUsed += 1;
+    } else {
+      return res.status(400).json({ success: false, message: "Action must be approve or reject." });
+    }
+
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      message: action === "approve" ? "Order completed! Payment will be released." : "Revision requested.",
+      orderStatus: order.status,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
     
     
