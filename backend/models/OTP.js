@@ -12,6 +12,8 @@ const otpSchema = new mongoose.Schema(
         "email_verification",   // Member 4 - account registration
         "login_otp",            // Member 4 - 2FA login
         "password_reset",       // Member 4 - password reset
+        "payment_verification", // Member 1 - payment/transaction OTP
+        "payout_verification",  // Member 1 - payout request OTP
        
       ],
       required: true,
