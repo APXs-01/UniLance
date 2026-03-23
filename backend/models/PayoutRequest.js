@@ -38,10 +38,21 @@ const payoutRequestSchema = new mongoose.Schema(
     processedAt:  { type: Date },
     rejectionNote:{ type: String, default: "" },
     stripePayoutId: { type: String, default: "" },
-    
+
     // ─── Payout ID ────────────────────────────────────────────────────────────
     payoutId: { type: String, unique: true },
 
   },
   { timestamps: true }
 );
+
+// Auto-generate payout ID
+payoutRequestSchema.pre("save", async function (next) {
+  if (!this.payoutId) {
+    const uid = Math.random().toString(36).substring(2, 9).toUpperCase();
+    this.payoutId = `UNI-PAY-${uid}`;
+  }
+  next();
+});
+
+module.exports = mongoose.model("PayoutRequest", payoutRequestSchema);
