@@ -59,3 +59,47 @@ const register = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Verify Email with OTP ────────────────────────────────────────
+// POST /api/auth/verify-email
+const verifyEmail = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const result = await verifyOTP(email, otp, "email_verification");
+    if (!result.valid) {
+      return res.status(400).json({ success: false, message: result.message });
+    }
+
+    const user = await User.findOneAndUpdate(
+      { email: email.toLowerCase() },
+      {
+        isEmailVerified: true,
+        "profileCompletionSteps.basicInfo": true,
+      },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    const token = generateToken(user._id);
+
+    res.status(200).json({
+      success: true,
+      message: "Email verified successfully.",
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        university: user.university,
+        profileCompletion: user.getProfileCompletion(),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
