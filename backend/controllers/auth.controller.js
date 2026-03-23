@@ -204,3 +204,36 @@ const forgotPassword = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Reset Password (Verify OTP + Set new password) ───────────────
+// POST /api/auth/reset-password
+const resetPassword = async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ success: false, message: "Email, OTP, and new password are required." });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ success: false, message: "Password must be at least 6 characters." });
+    }
+
+    const result = await verifyOTP(email, otp, "password_reset");
+    if (!result.valid) {
+      return res.status(400).json({ success: false, message: result.message });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    user.password = newPassword; // Will be hashed by pre-save hook
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Password reset successfully. You can now login." });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
