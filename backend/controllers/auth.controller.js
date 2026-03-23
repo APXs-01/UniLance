@@ -45,6 +45,16 @@ const register = async (req, res) => {
       university,
     });
 
+     // ─── Member 4 - Send Email Verification OTP ───────────────────────────────
+    const otp = await createOTP(email, "email_verification");
+    await sendEmailVerificationOTP(email, otp, name);
+
+    res.status(201).json({
+      success: true,
+      message: "Registration successful. Please verify your email with the OTP sent.",
+      userId: user._id,
+    });
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
