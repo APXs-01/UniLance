@@ -44,3 +44,36 @@ const getPublicProfile = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 4 - Update Profile ────────────────────────────────────────────────
+// PUT /api/users/profile
+const updateProfile = async (req, res) => {
+  try {
+    const { name, bio, phone, location, portfolioTheme } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (name) user.name = name;
+    if (bio !== undefined) { user.bio = bio; user.profileCompletionSteps.bio = !!bio; }
+    if (phone !== undefined) user.phone = phone;
+    if (location !== undefined) user.location = location;
+    if (portfolioTheme) user.portfolioTheme = portfolioTheme;
+
+    // Update basic info completion
+    if (user.name && user.phone && user.location) {
+      user.profileCompletionSteps.basicInfo = true;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully.",
+      user: {
+        ...user.toObject(),
+        profileCompletion: user.getProfileCompletion(),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
