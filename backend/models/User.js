@@ -23,6 +23,22 @@ const skillSchema = new mongoose.Schema({
   verifiedAt: { type: Date },
 });
 
+const userSchema = new mongoose.Schema(
+  {
+    // ─── Basic Info ───────────────────────────────────────────────────────────
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    password: { type: String, required: true, minlength: 6 },
 
+    // ─── Role ─────────────────────────────────────────────────────────────────
+    role: {
+      type: String,
+      enum: ["freelancer", "buyer", "admin"],
+      required: true,
+    },
+    
+    },
+    { timestamps: true }
+);
 
 module.exports = mongoose.model("User", userSchema);
