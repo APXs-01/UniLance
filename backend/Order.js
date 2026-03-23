@@ -26,6 +26,13 @@ const orderSchema = new mongoose.Schema(
       ref: "Gig",
       required: true,
     },
+
+     // ─── Order Details ────────────────────────────────────────────────────────
+    orderNumber:    { type: String, unique: true }, // e.g. UNI-20240101-0001
+    requirements:   { type: String, default: "" },  // buyer's project requirements
+    price:          { type: Number, required: true },
+    deliveryDays:   { type: Number, required: true },
+    deadline:       { type: Date },
 },
   { timestamps: true }
 );  
