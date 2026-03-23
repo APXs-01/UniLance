@@ -71,3 +71,54 @@ const toggleUserStatus = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Admin: Platform Overview Stats ──────────────────────────────────────────
+// GET /api/admin/dashboard/overview
+const getOverviewStats = async (req, res) => {
+  try {
+    const [
+      totalUsers, totalFreelancers, totalBuyers,
+      totalOrders, completedOrders, pendingOrders,
+      totalGigs, totalCommunityMembers,
+    ] = await Promise.all([
+      User.countDocuments(),
+      User.countDocuments({ role: "freelancer" }),
+      User.countDocuments({ role: "buyer" }),
+      Order.countDocuments(),
+      Order.countDocuments({ status: "completed" }),
+      Order.countDocuments({ status: "pending" }),
+      Gig.countDocuments({ isActive: true }),
+      Community.aggregate([{ $project: { count: { $size: "$members" } } }, { $group: { _id: null, total: { $sum: "$count" } } }]),
+    ]);
+
+    res.status(200).json({
+      success: true,
+      stats: {
+        totalUsers,
+        totalFreelancers,
+        totalBuyers,
+        totalOrders,
+        completedOrders,
+        pendingOrders,
+        totalGigs,
+        totalCommunityMemberships: totalCommunityMembers[0]?.total || 0,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = {
+  getFinanceDashboard,
+  getAllUsers,
+  toggleUserStatus,
+  getAllOrders,
+  getAllCommunities,
+  toggleCommunityStatus,
+  getFlaggedReviews,
+  createDiscount,
+  getDiscounts,
+  toggleDiscount,
+  getOverviewStats,
+};
