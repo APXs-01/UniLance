@@ -67,6 +67,12 @@ const orderSchema = new mongoose.Schema(
     // ─── Review (Member 2) ────────────────────────────────────────────────────
     isReviewed: { type: Boolean, default: false },
 
-},
+    // ─── Timestamps ───────────────────────────────────────────────────────────
+    acceptedAt:   { type: Date },
+    completedAt:  { type: Date },
+    cancelledAt:  { type: Date },
+  },
   { timestamps: true }
-);  
+)
+
+ 
