@@ -282,6 +282,37 @@ const getOrder = async (req, res) => {
   }
 };
 
+// ─── Member 2 - Get My Orders (Buyer or Freelancer) ──────────────────────────
+// GET /api/orders/my-orders
+const getMyOrders = async (req, res) => {
+  try {
+    const { status, page = 1, limit = 10 } = req.query;
+
+    const query =
+      req.user.role === "buyer"
+        ? { buyer: req.user._id }
+        : { freelancer: req.user._id };
+
+    if (status) query.status = status;
+
+    const total = await Order.countDocuments(query);
+    const orders = await Order.find(query)
+      .populate("gig", "title coverImage price category")
+      .populate(req.user.role === "buyer" ? "freelancer" : "buyer", "name profilePicture")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    res.status(200).json({
+      success: true,
+      orders,
+      pagination: { total, page: parseInt(page), pages: Math.ceil(total / limit) },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 
     
     
