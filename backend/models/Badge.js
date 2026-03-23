@@ -17,7 +17,7 @@ const badgeSchema = new mongoose.Schema(
       type: String,
       enum: [
         "milestone",      // Member 2 - order completion milestones
-        
+        "skill_verified", // Member 4 - SmartQuest verified badge
         
         "top_rated",      // Member 2 - rating achievement
       ],
