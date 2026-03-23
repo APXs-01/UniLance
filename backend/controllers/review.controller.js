@@ -137,3 +137,28 @@ const getFreelancerReviews = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─── Member 2 - Freelancer Reply to Review ───────────────────────────────────
+// PUT /api/reviews/:reviewId/reply
+const replyToReview = async (req, res) => {
+  try {
+    const { reply } = req.body;
+    const review = await Review.findById(req.params.reviewId);
+
+    if (!review) {
+      return res.status(404).json({ success: false, message: "Review not found." });
+    }
+
+    if (review.freelancer.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: "Access denied." });
+    }
+
+    review.freelancerReply = reply;
+    review.freelancerRepliedAt = new Date();
+    await review.save();
+
+    res.status(200).json({ success: true, message: "Reply added.", review });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
