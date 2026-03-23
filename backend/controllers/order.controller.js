@@ -59,8 +59,26 @@ const placeOrder = async (req, res) => {
     // Increment gig order count
     await Gig.findByIdAndUpdate(gigId, { $inc: { totalOrders: 1 } });
 
-     } catch (error) {
+     // ─── Member 2 - Notify freelancer of new order ────────────────────────────
+    await notifyOrderPlaced(gig.freelancer._id, order._id, order.orderNumber);
+
+    res.status(201).json({
+      success: true,
+      message: "Order placed successfully. Awaiting payment.",
+      order: {
+        _id: order._id,
+        orderNumber: order.orderNumber,
+        status: order.status,
+        price: order.price,
+        deadline: order.deadline,
+        gigTitle: gig.title,
+      },
+    });
+  } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+    
     
