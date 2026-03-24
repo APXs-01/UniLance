@@ -109,6 +109,42 @@ const getOverviewStats = async (req, res) => {
   }
 };
 
+// ─── Member 3 - Admin: Get All Communities ───────────────────────────────────
+// GET /api/admin/communities
+const getAllCommunities = async (req, res) => {
+  try {
+    const communities = await Community.find()
+      .populate("moderators", "name email")
+      .select("name totalMembers totalMessages isActive");
+
+    res.status(200).json({ success: true, communities });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ─── Member 3 - Admin: Toggle Community Status ────────────────────────────────
+// PUT /api/admin/communities/:communityId/toggle
+const toggleCommunityStatus = async (req, res) => {
+  try {
+    const community = await Community.findById(req.params.communityId);
+    if (!community) {
+      return res.status(404).json({ success: false, message: "Community not found." });
+    }
+
+    community.isActive = !community.isActive;
+    await community.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Community ${community.isActive ? "activated" : "deactivated"}.`,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
 module.exports = {
   getFinanceDashboard,
   getAllUsers,
