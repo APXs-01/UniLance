@@ -18,3 +18,6 @@ const { isFreelancer } = require("../middleware/role.middleware");
 
 // Public platform stats
 router.get("/stats", getPlatformStats);
+
+// Member 4 - getAllFreelancers
+router.get("/freelancers", getFreelancers);
