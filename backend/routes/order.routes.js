@@ -12,3 +12,6 @@ const {
 } = require("../controllers/order.controller");
 const { protect } = require("../middleware/auth.middleware");
 const { isBuyer, isFreelancer } = require("../middleware/role.middleware");
+
+// Member 2 - placeOrder
+router.post("/", protect, isBuyer, placeOrder);
