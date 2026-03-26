@@ -27,3 +27,6 @@ router.get("/profile/:identifier", getPublicProfile);
 
 // Member 4 - updateUserProfile
 router.put("/profile", protect, updateProfile);
+
+// Member 4 - updateProfilePicture
+router.put("/profile/picture", protect, updateProfilePicture);
