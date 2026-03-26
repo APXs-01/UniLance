@@ -11,3 +11,6 @@ const {
 } = require("../controllers/review.controller");
 const { protect } = require("../middleware/auth.middleware");
 const { isBuyer, isAdmin } = require("../middleware/role.middleware");
+
+// Member 2 - submitReview
+router.post("/", protect, isBuyer, submitReview);
