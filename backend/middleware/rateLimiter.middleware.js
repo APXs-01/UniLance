@@ -18,4 +18,13 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-module.exports = { apiLimiter, authLimiter };
+
+// ─── OTP request limiter ───────────────────────────────────────────────────────
+const otpLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 3,
+  message: { success: false, message: "Too many OTP requests. Please wait 10 minutes." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+module.exports = { apiLimiter, authLimiter, otpLimiter };
