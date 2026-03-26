@@ -42,3 +42,6 @@ router.put("/availability", protect, isFreelancer, updateAvailability);
 
 // Member 4 - getFreelancerAnalyticsDashboard
 router.get("/analytics", protect, isFreelancer, getFreelancerAnalytics);
+
+// Member 4 - exportPortfolioPDF
+router.get("/portfolio/export", protect, exportPortfolioPDF);
