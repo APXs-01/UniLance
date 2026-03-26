@@ -27,3 +27,8 @@ router.put("/:reviewId/reply", protect, replyToReview);
 
 // Member 2 - flagReviewAsInappropriate
 router.put("/:reviewId/flag", protect, flagReview);
+
+// Member 2 - adminDeleteInappropriateReview
+router.delete("/admin/:reviewId", protect, isAdmin, adminDeleteReview);
+
+module.exports = router;
