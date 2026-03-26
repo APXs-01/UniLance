@@ -21,3 +21,6 @@ router.get("/stats", getPlatformStats);
 
 // Member 4 - getAllFreelancers
 router.get("/freelancers", getFreelancers);
+
+// Member 4 - getPublicProfileByIdOrSlug
+router.get("/profile/:identifier", getPublicProfile);
