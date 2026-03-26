@@ -14,3 +14,6 @@ const { isBuyer, isAdmin } = require("../middleware/role.middleware");
 
 // Member 2 - submitReview
 router.post("/", protect, isBuyer, submitReview);
+
+// Member 2 - getGigReviews
+router.get("/gig/:gigId", getGigReviews);
