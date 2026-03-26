@@ -40,3 +40,5 @@ router.delete("/skills/:skillId", protect, isFreelancer, removeSkill);
 // Member 4 - updateAvailabilitySchedule
 router.put("/availability", protect, isFreelancer, updateAvailability);
 
+// Member 4 - getFreelancerAnalyticsDashboard
+router.get("/analytics", protect, isFreelancer, getFreelancerAnalytics);
