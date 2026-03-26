@@ -21,3 +21,6 @@ router.get("/gig/:gigId", getGigReviews);
 // Member 2 - getFreelancerReviews
 router.get("/freelancer/:freelancerId", getFreelancerReviews);
 
+// Member 2 - replyToReview (freelancer)
+router.put("/:reviewId/reply", protect, replyToReview);
+
