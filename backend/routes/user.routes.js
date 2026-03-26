@@ -24,3 +24,6 @@ router.get("/freelancers", getFreelancers);
 
 // Member 4 - getPublicProfileByIdOrSlug
 router.get("/profile/:identifier", getPublicProfile);
+
+// Member 4 - updateUserProfile
+router.put("/profile", protect, updateProfile);
