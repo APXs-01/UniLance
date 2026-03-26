@@ -15,4 +15,12 @@ const authorize = (...roles) => {
     next();
   };
 };
-module.exports = { authorize };
+
+// ─── Shorthand role guards ─────────────────────────────────────────────────────
+const isAdmin      = authorize("admin");
+const isFreelancer = authorize("freelancer");
+const isBuyer      = authorize("buyer");
+const isFreelancerOrAdmin = authorize("freelancer", "admin");
+const isBuyerOrAdmin      = authorize("buyer", "admin");
+
+module.exports = { authorize, isAdmin, isFreelancer, isBuyer, isFreelancerOrAdmin, isBuyerOrAdmin };
