@@ -33,3 +33,6 @@ router.put("/profile/picture", protect, updateProfilePicture);
 
 // Member 4 - addOrUpdateSkill
 router.post("/skills", protect, isFreelancer, addSkill);
+
+// Member 4 - removeSkill
+router.delete("/skills/:skillId", protect, isFreelancer, removeSkill);
