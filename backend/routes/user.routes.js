@@ -30,3 +30,6 @@ router.put("/profile", protect, updateProfile);
 
 // Member 4 - updateProfilePicture
 router.put("/profile/picture", protect, updateProfilePicture);
+
+// Member 4 - addOrUpdateSkill
+router.post("/skills", protect, isFreelancer, addSkill);
