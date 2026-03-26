@@ -24,3 +24,6 @@ router.get("/freelancer/:freelancerId", getFreelancerReviews);
 // Member 2 - replyToReview (freelancer)
 router.put("/:reviewId/reply", protect, replyToReview);
 
+
+// Member 2 - flagReviewAsInappropriate
+router.put("/:reviewId/flag", protect, flagReview);
