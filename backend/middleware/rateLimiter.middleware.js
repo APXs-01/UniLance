@@ -27,4 +27,15 @@ const otpLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-module.exports = { apiLimiter, authLimiter, otpLimiter };
+
+// ─── SmartQuest limiter (Member 4) - max 2 attempts per 24 hours ──────────────
+// NOTE: Per-user limiting is enforced in the controller via DB (smartQuestAttempts field)
+// This middleware adds IP-level protection on top
+const smartQuestLimiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000, // 24 hours
+  max: 5, // IP-level: 5 per 24h (per-user limit of 2 enforced in controller)
+  message: { success: false, message: "SmartQuest attempt limit reached. Try again tomorrow." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+module.exports = { apiLimiter, authLimiter, otpLimiter, smartQuestLimiter };
