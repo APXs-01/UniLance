@@ -28,3 +28,5 @@ router.put("/:orderId/respond", protect, isFreelancer, respondToOrder);
 // Member 2 - freelancerSubmitDelivery
 router.post("/:orderId/deliver", protect, isFreelancer, submitDelivery);
 
+// Member 2 - buyerReviewDelivery (approve/reject)
+router.put("/:orderId/review-delivery", protect, isBuyer, reviewDelivery);
