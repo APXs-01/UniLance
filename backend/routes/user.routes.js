@@ -13,3 +13,8 @@ const {
   getFreelancers,
   getPlatformStats,
 } = require("../controllers/user.controller");
+const { protect } = require("../middleware/auth.middleware");
+const { isFreelancer } = require("../middleware/role.middleware");
+
+// Public platform stats
+router.get("/stats", getPlatformStats);
