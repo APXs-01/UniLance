@@ -38,4 +38,5 @@ const smartQuestLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
 module.exports = { apiLimiter, authLimiter, otpLimiter, smartQuestLimiter };
