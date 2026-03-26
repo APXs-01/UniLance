@@ -24,3 +24,7 @@ router.get("/:orderId", protect, getOrder);
 
 // Member 2 - freelancerRespondToOrder (accept/reject)
 router.put("/:orderId/respond", protect, isFreelancer, respondToOrder);
+
+// Member 2 - freelancerSubmitDelivery
+router.post("/:orderId/deliver", protect, isFreelancer, submitDelivery);
+
