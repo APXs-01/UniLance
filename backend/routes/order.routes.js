@@ -18,3 +18,6 @@ router.post("/", protect, isBuyer, placeOrder);
 
 // Member 2 - getMyOrders (buyer or freelancer)
 router.get("/my-orders", protect, getMyOrders);
+
+// Member 2 - getOrderById
+router.get("/:orderId", protect, getOrder);
