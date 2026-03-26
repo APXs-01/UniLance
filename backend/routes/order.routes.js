@@ -30,3 +30,8 @@ router.post("/:orderId/deliver", protect, isFreelancer, submitDelivery);
 
 // Member 2 - buyerReviewDelivery (approve/reject)
 router.put("/:orderId/review-delivery", protect, isBuyer, reviewDelivery);
+
+// Member 2 - cancelOrder
+router.put("/:orderId/cancel", protect, cancelOrder);
+
+module.exports = router;
