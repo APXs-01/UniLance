@@ -15,3 +15,6 @@ const { isBuyer, isFreelancer } = require("../middleware/role.middleware");
 
 // Member 2 - placeOrder
 router.post("/", protect, isBuyer, placeOrder);
+
+// Member 2 - getMyOrders (buyer or freelancer)
+router.get("/my-orders", protect, getMyOrders);
