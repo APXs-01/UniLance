@@ -58,4 +58,28 @@ export const smartQuestAPI = {
   submit:     (id, data) => API.post(`/smartquest/${id}/submit`, data),
   getHistory: ()         => API.get("/smartquest/history"),
 };
+
+// ─── Admin API - All Members ───────────────────────────────────────────────────
+export const adminAPI = {
+  getOverviewStats:       ()         => API.get("/admin/dashboard/overview"),
+  getFinanceDashboard:    ()         => API.get("/admin/dashboard/finance"),
+  getFinance:             ()         => API.get("/admin/dashboard/finance"),
+  getAllUsers:             (params)   => API.get("/admin/users", { params }),
+  getUsers:               (params)   => API.get("/admin/users", { params }),
+  toggleUserStatus:       (id)       => API.put(`/admin/users/${id}/toggle-status`),
+  toggleUser:             (id)       => API.put(`/admin/users/${id}/toggle-status`),
+  getAllOrders:            (params)   => API.get("/admin/orders", { params }),
+  getOrders:              (params)   => API.get("/admin/orders", { params }),
+  getFlaggedReviews:      ()         => API.get("/admin/reviews/flagged"),
+  getAllCommunities:       ()         => API.get("/admin/communities"),
+  getCommunities:         ()         => API.get("/admin/communities"),
+  toggleCommunityStatus:  (id)       => API.put(`/admin/communities/${id}/toggle-status`),
+  getPendingPayouts:      ()         => API.get("/payouts/admin/pending"),
+  approvePayout:          (id)       => API.put(`/payouts/admin/${id}/approve`),
+  rejectPayout:           (id, data) => API.put(`/payouts/admin/${id}/reject`, data),
+  createDiscount:         (data)     => API.post("/admin/discounts", data),
+  getDiscounts:           ()         => API.get("/admin/discounts"),
+  toggleDiscount:         (id)       => API.put(`/admin/discounts/${id}/toggle`),
+  deleteReview:           (id, data) => API.delete(`/reviews/admin/${id}`, { data }),
+};
 export default API;
