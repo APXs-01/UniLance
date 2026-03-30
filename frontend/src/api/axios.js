@@ -37,4 +37,18 @@ export const authAPI = {
   getMe:          ()     => API.get("/auth/me"),
   changePassword: (data) => API.put("/auth/change-password", data),
 };
+
+// ─── Member 4 - User/Profile API ─────────────────────────────────────────────
+export const userAPI = {
+  getPlatformStats:  ()       => API.get("/users/stats"),
+  getFreelancers:    (params) => API.get("/users/freelancers", { params }),
+  getPublicProfile:  (id)     => API.get(`/users/profile/${id}`),
+  updateProfile:     (data)   => API.put("/users/profile", data),
+  updatePicture:     (data)   => API.put("/users/profile/picture", data),
+  addSkill:          (data)   => API.post("/users/skills", data),
+  removeSkill:       (id)     => API.delete(`/users/skills/${id}`),
+  updateAvailability:(data)   => API.put("/users/availability", data),
+  getAnalytics:      ()       => API.get("/users/analytics"),
+  exportPortfolio:   ()       => API.get("/users/portfolio/export", { responseType: "blob" }),
+};
 export default API;
