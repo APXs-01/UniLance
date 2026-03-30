@@ -51,4 +51,11 @@ export const userAPI = {
   getAnalytics:      ()       => API.get("/users/analytics"),
   exportPortfolio:   ()       => API.get("/users/portfolio/export", { responseType: "blob" }),
 };
+
+// ─── Member 4 - SmartQuest API ────────────────────────────────────────────────
+export const smartQuestAPI = {
+  start:      (data)     => API.post("/smartquest/start", data),
+  submit:     (id, data) => API.post(`/smartquest/${id}/submit`, data),
+  getHistory: ()         => API.get("/smartquest/history"),
+};
 export default API;
