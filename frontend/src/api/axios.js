@@ -25,4 +25,16 @@ API.interceptors.response.use(
     return Promise.reject(err);
   }
 );
+
+// ─── Member 4 - Auth API ──────────────────────────────────────────────────────
+export const authAPI = {
+  register:       (data) => API.post("/auth/register", data),
+  verifyEmail:    (data) => API.post("/auth/verify-email", data),
+  resendOTP:      (data) => API.post("/auth/resend-otp", data),
+  login:          (data) => API.post("/auth/login", data),
+  forgotPassword: (data) => API.post("/auth/forgot-password", data),
+  resetPassword:  (data) => API.post("/auth/reset-password", data),
+  getMe:          ()     => API.get("/auth/me"),
+  changePassword: (data) => API.put("/auth/change-password", data),
+};
 export default API;
