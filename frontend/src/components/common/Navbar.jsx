@@ -39,7 +39,8 @@ const Navbar = () => {
         <div className="navbar-right">
           {user ? (
             <>
-              
+               {/* Member 1 - Notification Bell */}
+              <NotificationBell />
 
               {/* Role-specific quick links */}
               {isFreelancer && (
