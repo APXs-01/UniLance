@@ -17,6 +17,13 @@ const notificationSchema = new mongoose.Schema(
     type: {
       type: String,
       enum: [
+        
+        // Member 1 - Payment events
+        "payment_received",
+        "payment_released",
+        "payout_requested",
+        "payout_approved",
+        "payout_rejected",
        
         // Member 2 - Order events
         "order_placed",
@@ -33,6 +40,11 @@ const notificationSchema = new mongoose.Schema(
         "smartquest_passed",
         "smartquest_failed",
         "profile_viewed",
+
+        // Member 3 - Community events
+        "community_joined",
+        "new_message",
+        "member_flagged",
       ],
       required: true,
     },
